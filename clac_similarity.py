@@ -2,6 +2,7 @@
 
 from dim_items import *
 from dim_fashion_matchsets import *
+from const import *
 import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
@@ -32,7 +33,7 @@ class CalcSimilarity:
                     value_1 = cat_1_dic[cat_2]
                 except:
                     value_1 = 0
-                cat_1_dic[cat_2] = value_1 + match_pairs[match_pair]
+                cat_1_dic[cat_2] = value_1 + self.match_pairs[match_pair]
                 cat_pairs[cat_1] = cat_1_dic
 
                 try:
@@ -43,7 +44,7 @@ class CalcSimilarity:
                     value_2 = cat_2_dic[cat_1]
                 except:
                     value_2 = 0
-                cat_2_dic[cat_1] = value_2 + match_pairs[match_pair]
+                cat_2_dic[cat_1] = value_2 + self.match_pairs[match_pair]
                 cat_pairs[cat_2] = cat_2_dic
             logging.debug('finish getting cat pairs, cat_pairs size: %d' % len(cat_pairs))
             return cat_pairs
@@ -73,7 +74,7 @@ class CalcSimilarity:
         def get_word_pair(self):
             logging.debug('get word pairs')
             word_pairs = {}
-            for match_pair in match_pairs.keys():
+            for match_pair in self.match_pairs.keys():
                 item_1, item_2 = match_pair.split(',')
                 terms_1 = self.dim_items[item_1].terms
                 terms_2 = self.dim_items[item_2].terms
@@ -123,11 +124,9 @@ class CalcSimilarity:
 
 
 if __name__ == '__main__':
-    filename = "c:\Users\SunderLab\Documents\myfile\cloth_matching_challenge\data\dim_items.txt"
-    di = DimItems(filename)
+    di = DimItems(FilePath.dim_items)
     dims = di.read_in()
-    filename = "c:\Users\SunderLab\Documents\myfile\cloth_matching_challenge\data\dim_fashion_matchsets.txt"
-    ms = MatchSets(filename)
+    ms = MatchSets(FilePath.dim_fashion_matchsets)
     match_pairs = ms.get_match_pairs()
 
     cs = CalcSimilarity()

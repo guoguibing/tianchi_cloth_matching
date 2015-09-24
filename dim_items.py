@@ -1,5 +1,8 @@
 # coding:utf-8
 
+from const import *
+
+
 '''
 记录每个商品信息的类
 '''
@@ -40,7 +43,6 @@ class DimItems:
 
 
 if __name__ == "__main__":
-    filename = "c:\Users\SunderLab\Documents\myfile\cloth_matching_challenge\data\dim_items.txt"
-    di = DimItems(filename)
+    di = DimItems(FilePath.dim_items)
     dims = di.read_in()
     print dims['41'].cat

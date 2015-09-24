@@ -1,6 +1,7 @@
 # encoding = utf-8
 from dim_items import *
 from dim_fashion_matchsets import *
+from const import *
 from clac_similarity import *
 
 
@@ -12,19 +13,18 @@ class Predict:
         self.word_similarities = word_similarities
 
     def predict(self):
-        f = open(' fm_submissions', 'wa')
+        logging.debug('predict start')
+        f = open(FilePath.fm_submissions, 'w+')
         for line in open(self.test_filename):
             item = line.strip()
             similarities = self.get_similarity(item)
 
             to_write = item + ' '
-            num = 200
-            for item in similarities.keys():
-                if(num == 0):
-                    break
-                num -= 1
+            for i in range(0, 199):
+                item = similarities[i][0]
                 to_write += item + ','
-            f.write(to_write[:-1])
+            f.write(to_write[:-1] + '\n')
+        logging.debug('finish predicting')
 
     def get_similarity(self, item):
         similarities = {}
@@ -59,16 +59,14 @@ class Predict:
         return cat_sim + term_sim
 
 if __name__ == '__main__':
-    filename = "c:\Users\SunderLab\Documents\myfile\cloth_matching_challenge\data\dim_items.txt"
-    di = DimItems(filename)
+    di = DimItems(FilePath.dim_items)
     dims = di.read_in()
-    filename = "c:\Users\SunderLab\Documents\myfile\cloth_matching_challenge\data\dim_fashion_matchsets.txt"
-    ms = MatchSets(filename)
+    ms = MatchSets(FilePath.dim_fashion_matchsets)
     match_pairs = ms.get_match_pairs()
     cs = CalcSimilarity()
     csw = cs.WordSim(dims, match_pairs)
     word_sim = csw.calc()
     css = cs.CatSim(dims, match_pairs)
     cat_sim = css.calc()
-    p = Predict(dims, cat_sim, word_sim)
+    p = Predict(FilePath.test_items, dims, cat_sim, word_sim)
     p.predict()

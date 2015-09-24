@@ -1,6 +1,6 @@
 # coding:utf-8
 import logging
-
+from const import *
 
 class MatchSets:
 
@@ -43,7 +43,6 @@ class MatchSets:
         return match_pairs
 
 if __name__ == "__main__":
-    filename = "c:\Users\SunderLab\Documents\myfile\cloth_matching_challenge\data\dim_fashion_matchsets.txt"
-    ms = MatchSets(filename)
+    ms = MatchSets(FilePath.dim_fashion_matchsets)
     ms.get_match_pairs()
 
