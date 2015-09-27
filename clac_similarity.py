@@ -59,9 +59,12 @@ class CalcSimilarity:
                 for another_cat in cat_pairs[cat].keys():
                     total_count += cat_pairs[cat][another_cat]
                 for another_cat in cat_pairs[cat].keys():
-                    count = cat_pairs[cat][another_cat]
-                    similarity = 1.0*count/total_count
-                    cat_similarity[another_cat] = similarity
+                    if cat == another_cat:
+                        cat_similarity[another_cat] = 1.0
+                    else:
+                        count = cat_pairs[cat][another_cat]
+                        similarity = 1.0*count/total_count
+                        cat_similarity[another_cat] = similarity
                 cat_similarities[cat] = cat_similarity
             logging.debug('finish calc cat similarity, cat_similarities size: %d' % len(cat_similarities))
             return cat_similarities
@@ -114,10 +117,13 @@ class CalcSimilarity:
                 for another_word in word_pairs[word].keys():
                     total_count += word_pairs[word][another_word]
                 for another_word in word_pairs[word].keys():
-                    count = word_pairs[word][another_word]
-                    if count > 10:
-                        similarity = 1.0*count/total_count
-                        word_similarity[another_word] = similarity
+                    if word == another_word:
+                        word_similarity[another_word] = 1.0
+                    else:
+                        count = word_pairs[word][another_word]
+                        if count > 10:
+                            similarity = 1.0*count/total_count
+                            word_similarity[another_word] = similarity
                 word_similarities[word] = word_similarity
             logging.debug('finish calc word similarity, word_similarity size: %d' % len(word_similarities))
             return word_similarities
