@@ -1,6 +1,6 @@
 # coding:utf-8
 
-from const import *
+from my_const import *
 
 
 '''

@@ -1,6 +1,6 @@
 # coding:utf-8
 import logging
-from const import *
+from my_const import *
 
 class MatchSets:
 

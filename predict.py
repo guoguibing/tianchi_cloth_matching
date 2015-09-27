@@ -1,7 +1,7 @@
 # encoding = utf-8
 from dim_items import *
 from dim_fashion_matchsets import *
-from const import *
+from my_const import *
 from clac_similarity import *
 
 
@@ -64,9 +64,9 @@ if __name__ == '__main__':
     ms = MatchSets(FilePath.dim_fashion_matchsets)
     match_pairs = ms.get_match_pairs()
     cs = CalcSimilarity()
-    csw = cs.WordSim(dims, match_pairs)
+    csw = cs.WordSim(dims, match_pairs, FilePath.word_similarities)
     word_sim = csw.calc()
-    css = cs.CatSim(dims, match_pairs)
+    css = cs.CatSim(dims, match_pairs, FilePath.cat_similarities)
     cat_sim = css.calc()
     p = Predict(FilePath.test_items, dims, cat_sim, word_sim)
     p.predict()

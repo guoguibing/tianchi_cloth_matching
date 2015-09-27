@@ -1,8 +1,9 @@
 # coding = utf-8
 
+from my_const import *
 from dim_items import *
 from dim_fashion_matchsets import *
-from const import *
+from my_const import *
 import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
@@ -12,11 +13,21 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 class CalcSimilarity:
+    def write_to_file(self, similarity, filename):
+        logging.debug("saving file: " + filename)
+        f = open(filename, 'w')
+        for obj_1 in similarity.keys():
+            for obj_2 in similarity[obj_1]:
+                value = similarity[obj_1][obj_2]
+                f.write(obj_1 + ',' + obj_2 + ',' + str(value) + '\n')
+        f.close()
+        logging.debug("finish saving")
 
     class CatSim:
-        def __init__(self, dim_items, match_pairs):
+        def __init__(self, dim_items, match_pairs, out_filename):
             self.dim_items = dim_items
             self.match_pairs = match_pairs
+            self.out_filename = out_filename
 
         def get_cat_pair(self):
             logging.debug('geting cat pairs')
@@ -67,12 +78,14 @@ class CalcSimilarity:
                         cat_similarity[another_cat] = similarity
                 cat_similarities[cat] = cat_similarity
             logging.debug('finish calc cat similarity, cat_similarities size: %d' % len(cat_similarities))
+            CalcSimilarity.write_to_file(CalcSimilarity(), cat_similarities, self.out_filename)
             return cat_similarities
 
     class WordSim:
-        def __init__(self, dim_items, match_pairs):
+        def __init__(self, dim_items, match_pairs, out_filename):
             self.dim_items = dim_items
             self.match_pairs = match_pairs
+            self.out_filename = out_filename
 
         def get_word_pair(self):
             logging.debug('get word pairs')
@@ -126,6 +139,7 @@ class CalcSimilarity:
                             word_similarity[another_word] = similarity
                 word_similarities[word] = word_similarity
             logging.debug('finish calc word similarity, word_similarity size: %d' % len(word_similarities))
+            CalcSimilarity.write_to_file(CalcSimilarity(), word_similarities, self.out_filename)
             return word_similarities
 
 
@@ -140,5 +154,5 @@ if __name__ == '__main__':
     # cat_sim = css.calc()
     # print cat_sim['399']
 
-    csw = cs.WordSim(dims, match_pairs)
+    csw = cs.WordSim(dims, match_pairs, FilePath.word_similarities)
     word_sim = csw.calc()
