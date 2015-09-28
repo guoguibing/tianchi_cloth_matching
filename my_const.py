@@ -11,7 +11,7 @@ class FilePath:
 
     word_similarities_filename = home_path + "word_similarities.csv"
     cat_similarities_filename = home_path + "cat_similarities.csv"
-    term_similarities_filename = home_path + "term_similarities.csv"
+    term_similarities_filename = home_path + "term_similarities\\"
 
     item_cat_sim_filename = home_path + "item_cat_sim.csv"
     item_term_sim_filename = home_path + "item_term_sim.csv"

@@ -4,6 +4,7 @@ from my_const import *
 from dim_items import *
 from dim_fashion_matchsets import *
 from my_const import *
+import os
 import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
@@ -142,27 +143,19 @@ class CalcSimilarity:
             self.word_similarities = word_similarities
             self.test_filename = test_filename
             self.out_filename = out_filename
+            os.makedirs(out_filename)
 
         def calc(self):
             logging.debug('calc term similarity')
-            out_file = open(self.out_filename, 'w')
-            term_similarities = {}
             items = []
             for line in open(self.test_filename, 'r'):
                 item = line.strip()
                 items.append(item)
             for i in range(0, len(items)):
-                for j in range(i + 1, len(items)):
+                out_file = open(self.out_filename + items[i], 'a')
+                for j in range(0, len(items)):
                     item = items[i]
                     another_item = items[j]
-                    try:
-                        item_term_sim = term_similarities[item]
-                    except:
-                        item_term_sim = {}
-                    try:
-                        another_item_term_sim = term_similarities[another_item]
-                    except:
-                        another_item_term_sim = {}
 
                     terms = self.dim_items[item].terms
                     another_terms = self.dim_items[another_item].terms
@@ -177,13 +170,8 @@ class CalcSimilarity:
                             if word_sim < temp:
                                 word_sim = temp
                         term_sim += word_sim
-                    # item_term_sim[another_item] = term_sim
-                    # another_item_term_sim[item] = term_sim
-                    # term_similarities[item] = item_term_sim
-                    # term_similarities[another_item] = another_item_term_sim
-                    out_file.write(item + ',' + another_item + ',' + str(term_sim) + '\n')
-                    out_file.write(another_item + ',' + item + ',' + str(term_sim) + '\n')
-            out_file.close()
+                    out_file.write( another_item + ',' + str(term_sim) + '\n')
+                out_file.close()
             logging.debug('finish calc term similarity')
 
 if __name__ == '__main__':
