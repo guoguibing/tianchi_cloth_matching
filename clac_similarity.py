@@ -187,17 +187,17 @@ class CalcSimilarity:
             logging.debug('finish calc term similarity')
 
 if __name__ == '__main__':
-    di = DimItems(FilePath.dim_items)
+    di = DimItems(FilePath.dim_items_filename)
     dims = di.read_in()
-    ms = MatchSets(FilePath.dim_fashion_matchsets)
+    ms = MatchSets(FilePath.dim_fashion_matchsets_filename)
     match_pairs = ms.get_match_pairs()
 
     cs = CalcSimilarity()
-    css = cs.CatSim(dims, match_pairs, FilePath.cat_similarities)
+    css = cs.CatSim(dims, match_pairs, FilePath.cat_similarities_filename)
     cat_sim = css.calc()
 
-    csw = cs.WordSim(dims, match_pairs, FilePath.word_similarities)
+    csw = cs.WordSim(dims, match_pairs, FilePath.word_similarities_filename)
     word_sim = csw.calc()
 
-    cst = cs.TermSim(dims, word_sim, FilePath.test_items, FilePath.term_similarities)
+    cst = cs.TermSim(dims, word_sim, FilePath.test_items_filename, FilePath.term_similarities_filename)
     cst.calc()

@@ -43,6 +43,6 @@ class MatchSets:
         return match_pairs
 
 if __name__ == "__main__":
-    ms = MatchSets(FilePath.dim_fashion_matchsets)
+    ms = MatchSets(FilePath.dim_fashion_matchsets_filename)
     ms.get_match_pairs()
 

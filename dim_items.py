@@ -43,6 +43,6 @@ class DimItems:
 
 
 if __name__ == "__main__":
-    di = DimItems(FilePath.dim_items)
+    di = DimItems(FilePath.dim_items_filename)
     dims = di.read_in()
     print dims['41'].cat
