@@ -1,19 +1,33 @@
 # encoding = utf-8
-from dim_items import *
-from dim_fashion_matchsets import *
-from my_const import *
+
 from clac_similarity import *
 
 
 class Predict:
-    def __init__(self, test_filename, dim_items, cat_similarities, word_similarities, item_cat_sim_filename,
-                 item_term_sim_filename):
+    def __init__(self, test_filename, dim_items_filename, cat_similarities_filename, term_similarities_filename):
         self.test_filename = test_filename
-        self.dim_items = dim_items
+        self.dim_item_filename = dim_items_filename
+        # get dim_items
+        di = DimItems(FilePath.dim_items_filename)
+        self.dim_items = di.read_in()
+        # get cat similarities
+        logging.debug('get cat similarities')
+        cat_similarities = {}
+        for line in open(cat_similarities_filename, 'r'):
+            line = line.strip()
+            item, another_item, sim = line.split(',')
+            cat_similarities[item + ',' + another_item] = float(sim)
+            cat_similarities[another_item + ',' + item] = float(sim)
         self.cat_similarities = cat_similarities
-        self.word_similarities = word_similarities
-        self.item_term_sim_file = open(item_term_sim_filename, 'w')
-        self.item_cat_sim_file = open(item_cat_sim_filename, 'w')
+        # get term similarities
+        logging.debug('get term similarities')
+        term_similarities = {}
+        for line in open(term_similarities_filename, 'r'):
+            line = line.strip()
+            item, another_item, sim = line.split(',')
+            term_similarities[item + ',' + another_item] = float(sim)
+            term_similarities[another_item + ',' + item] = float(sim)
+        self.term_similarities = term_similarities
 
     def predict(self):
         logging.debug('predict start')
@@ -33,11 +47,9 @@ class Predict:
             f.write(to_write[:-1] + '\n')
 
             num += 1
-            if num % 100 == 0:
+            if num % 20 == 0:
                 print str(num) + '/5484'
         f.close()
-        self.item_cat_sim_file.close()
-        self.item_cat_sim_file.close()
         logging.debug('finish predicting')
 
     def get_similarity(self, item):
@@ -57,26 +69,20 @@ class Predict:
     def get_item_similarity(self, item, another_item):
         cat = self.dim_items[item].cat
         another_cat = self.dim_items[another_item].cat
+        key = cat + ',' + another_cat
         try:
-            cat_sim = self.cat_similarities[cat][another_cat]
+            cat_sim = self.cat_similarities[key]
         except:
             cat_sim = 0
+        try:
+            term_sim = self.term_similarities[key]
+        except:
+            term_sim = 0
         return cat_sim + term_sim
 
 if __name__ == '__main__':
-    di = DimItems(FilePath.dim_items_filename)
-    dims = di.read_in()
-    ms = MatchSets(FilePath.dim_fashion_matchsets_filename)
-    match_pairs = ms.get_match_pairs()
-    cs = CalcSimilarity()
-    csw = cs.WordSim(dims, match_pairs, FilePath.word_similarities_filename)
-    word_sim = csw.calc()
-    css = cs.CatSim(dims, match_pairs, FilePath.cat_similarities_filename)
-    cat_sim = css.calc()
     p = Predict(FilePath.test_items_filename,
-                dims,
-                cat_sim,
-                word_sim,
-                FilePath.item_cat_sim_filename,
-                FilePath.item_term_sim_filename)
+                FilePath.dim_items_filename,
+                FilePath.cat_similarities_filename,
+                FilePath.term_similarities_filename)
     p.predict()
