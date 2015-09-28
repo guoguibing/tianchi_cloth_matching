@@ -70,12 +70,9 @@ class CalcSimilarity:
                 for another_cat in cat_pairs[cat].keys():
                     total_count += cat_pairs[cat][another_cat]
                 for another_cat in cat_pairs[cat].keys():
-                    if cat == another_cat:
-                        cat_similarity[another_cat] = 1.0
-                    else:
-                        count = cat_pairs[cat][another_cat]
-                        similarity = 1.0*count/total_count
-                        cat_similarity[another_cat] = similarity
+                    count = cat_pairs[cat][another_cat]
+                    similarity = 1.0*count/total_count
+                    cat_similarity[another_cat] = similarity
                 cat_similarities[cat] = cat_similarity
             logging.debug('finish calc cat similarity, cat_similarities size: %d' % len(cat_similarities))
             CalcSimilarity.write_to_file(CalcSimilarity(), cat_similarities, self.out_filename)
@@ -130,18 +127,64 @@ class CalcSimilarity:
                 for another_word in word_pairs[word].keys():
                     total_count += word_pairs[word][another_word]
                 for another_word in word_pairs[word].keys():
-                    if word == another_word:
-                        word_similarity[another_word] = 1.0
-                    else:
-                        count = word_pairs[word][another_word]
-                        if count > 10:
-                            similarity = 1.0*count/total_count
-                            word_similarity[another_word] = similarity
+                    count = word_pairs[word][another_word]
+                    if count > 10:
+                        similarity = 1.0*count/total_count
+                        word_similarity[another_word] = similarity
                 word_similarities[word] = word_similarity
             logging.debug('finish calc word similarity, word_similarity size: %d' % len(word_similarities))
             CalcSimilarity.write_to_file(CalcSimilarity(), word_similarities, self.out_filename)
             return word_similarities
 
+    class TermSim:
+        def __init__(self, dim_items, word_similarities, test_filename, out_filename):
+            self.dim_items = dim_items
+            self.word_similarities = word_similarities
+            self.test_filename = test_filename
+            self.out_filename = out_filename
+
+        def calc(self):
+            logging.debug('calc term similarity')
+            out_file = open(self.out_filename, 'w')
+            term_similarities = {}
+            items = []
+            for line in open(self.test_filename, 'r'):
+                item = line.strip()
+                items.append(item)
+            for i in range(0, len(items)):
+                for j in range(i + 1, len(items)):
+                    item = items[i]
+                    another_item = items[j]
+                    try:
+                        item_term_sim = term_similarities[item]
+                    except:
+                        item_term_sim = {}
+                    try:
+                        another_item_term_sim = term_similarities[another_item]
+                    except:
+                        another_item_term_sim = {}
+
+                    terms = self.dim_items[item].terms
+                    another_terms = self.dim_items[another_item].terms
+                    term_sim = 0
+                    for word in terms:
+                        word_sim = 0
+                        for another_word in another_terms:
+                            try:
+                                temp = self.word_similarities[word][another_word]
+                            except:
+                                temp = 0
+                            if word_sim < temp:
+                                word_sim = temp
+                        term_sim += word_sim
+                    # item_term_sim[another_item] = term_sim
+                    # another_item_term_sim[item] = term_sim
+                    # term_similarities[item] = item_term_sim
+                    # term_similarities[another_item] = another_item_term_sim
+                    out_file.write(item + ',' + another_item + ',' + str(term_sim) + '\n')
+                    out_file.write(another_item + ',' + item + ',' + str(term_sim) + '\n')
+            out_file.close()
+            logging.debug('finish calc term similarity')
 
 if __name__ == '__main__':
     di = DimItems(FilePath.dim_items)
@@ -150,9 +193,11 @@ if __name__ == '__main__':
     match_pairs = ms.get_match_pairs()
 
     cs = CalcSimilarity()
-    # css = cs.CatSim(dims, match_pairs)
-    # cat_sim = css.calc()
-    # print cat_sim['399']
+    css = cs.CatSim(dims, match_pairs, FilePath.cat_similarities)
+    cat_sim = css.calc()
 
     csw = cs.WordSim(dims, match_pairs, FilePath.word_similarities)
     word_sim = csw.calc()
+
+    cst = cs.TermSim(dims, word_sim, FilePath.test_items, FilePath.term_similarities)
+    cst.calc()
