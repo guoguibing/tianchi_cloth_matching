@@ -1,6 +1,5 @@
 # coding = utf-8
 
-from my_const import *
 from dim_items import *
 from dim_fashion_matchsets import *
 from my_const import *
@@ -39,22 +38,22 @@ class CalcSimilarity:
                 cat_2 = self.dim_items[item_2].cat
                 try:
                     cat_1_dic = cat_pairs[cat_1]
-                except:
+                except KeyError:
                     cat_1_dic = {}
                 try:
                     value_1 = cat_1_dic[cat_2]
-                except:
+                except KeyError:
                     value_1 = 0
                 cat_1_dic[cat_2] = value_1 + self.match_pairs[match_pair]
                 cat_pairs[cat_1] = cat_1_dic
 
                 try:
                     cat_2_dic = cat_pairs[cat_2]
-                except:
+                except KeyError:
                     cat_2_dic = {}
                 try:
                     value_2 = cat_2_dic[cat_1]
-                except:
+                except KeyError:
                     value_2 = 0
                 cat_2_dic[cat_1] = value_2 + self.match_pairs[match_pair]
                 cat_pairs[cat_2] = cat_2_dic
@@ -96,22 +95,22 @@ class CalcSimilarity:
                     for word_2 in terms_2:
                         try:
                             word_1_pair = word_pairs[word_1]
-                        except:
+                        except KeyError:
                             word_1_pair = {}
                         try:
                             count = word_1_pair[word_2]
-                        except:
+                        except KeyError:
                             count = 0
                         word_1_pair[word_2] = count + 1
                         word_pairs[word_1] = word_1_pair
 
                         try:
                             word_2_pair = word_pairs[word_2]
-                        except:
+                        except KeyError:
                             word_2_pair = {}
                         try:
                             count = word_2_pair[word_1]
-                        except:
+                        except KeyError:
                             count = 0
                         word_2_pair[word_1] = count + 1
                         word_pairs[word_1] = word_2_pair
@@ -165,7 +164,7 @@ class CalcSimilarity:
                         for another_word in another_terms:
                             try:
                                 temp = self.word_similarities[word][another_word]
-                            except:
+                            except KeyError:
                                 temp = 0
                             if word_sim < temp:
                                 word_sim = temp

@@ -4,10 +4,11 @@ from clac_similarity import *
 
 
 class Predict:
-    def __init__(self, test_filename, dim_items_filename, cat_similarities_filename, term_similarities_filename):
+    def __init__(self, test_filename, dim_items_filename, cat_similarities_filename, term_similarities_filename, rate):
         self.test_filename = test_filename
         self.dim_item_filename = dim_items_filename
         self.term_similarities_filename = term_similarities_filename
+        self.rate = rate
         # get dim_items
         di = DimItems(FilePath.dim_items_filename)
         self.dim_items = di.read_in()
@@ -56,7 +57,7 @@ class Predict:
             # if another_item == item:
             #     continue
             try:
-                if self.cat_similarities[self.dim_items[item].cat][self.dim_items[another_item].cat] > 0.01:
+                if self.cat_similarities[self.dim_items[item].cat + ',' + self.dim_items[another_item].cat] > 0.01:
                     item_sim = self.get_item_similarity(item, another_item, term_similarity)
                     similarities[another_item] = item_sim
             except KeyError:
@@ -70,18 +71,20 @@ class Predict:
         key = cat + ',' + another_cat
         try:
             cat_sim = self.cat_similarities[key]
-        except:
+        except KeyError:
             cat_sim = 0
 
         try:
             term_sim = term_similarity[another_item]
-        except:
+        except KeyError:
             term_sim = 0
-        return cat_sim + term_sim
+        return self.rate*cat_sim + (1-self.rate)*term_sim
 
 if __name__ == '__main__':
+    rate = 0.8
     p = Predict(FilePath.test_items_filename,
                 FilePath.dim_items_filename,
                 FilePath.cat_similarities_filename,
-                FilePath.term_similarities_filename)
+                FilePath.term_similarities_filename,
+                rate)
     p.predict()

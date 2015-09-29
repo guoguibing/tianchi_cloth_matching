@@ -35,7 +35,7 @@ class MatchSets:
                             key = item + "," + another_item
                             try:
                                 value = match_pairs[key]
-                            except Exception:
+                            except KeyError:
                                 value = 0
                             match_pairs[key] = value + 1
                             # match_pairs[another_item + "," + item] = value + 1
