@@ -31,10 +31,10 @@ class Predict:
             similarities = self.get_similarity(item)
 
             to_write = item + ' '
-            max = 199
-            if max > len(similarities):
-                max = len(similarities)
-            for i in range(0, max):
+            max_num = 199
+            if max_num > len(similarities):
+                max_num = len(similarities)
+            for i in range(0, max_num):
                 item = similarities[i][0]
                 to_write += item + ','
             f.write(to_write[:-1] + '\n')
@@ -81,7 +81,7 @@ class Predict:
         return self.rate*cat_sim + (1-self.rate)*term_sim
 
 if __name__ == '__main__':
-    rate = 0.8
+    rate = 0
     p = Predict(FilePath.test_items_filename,
                 FilePath.dim_items_filename,
                 FilePath.cat_similarities_filename,
