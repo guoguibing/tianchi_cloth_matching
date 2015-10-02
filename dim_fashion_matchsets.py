@@ -26,9 +26,9 @@ class MatchSets:
         logging.debug("get match pairs")
         match_pairs = {}
         for match_set in match_sets:
-            for i in range(0, len(match_set) - 1):
+            for i in range(0, len(match_set)):
                 part = match_set[i]
-                for j in range(i + 1, len(match_set) - 1):
+                for j in range(i + 1, len(match_set)):
                     another_part = match_set[j]
                     for item in part:
                         for another_item in another_part:
