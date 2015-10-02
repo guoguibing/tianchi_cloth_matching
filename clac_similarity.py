@@ -113,7 +113,7 @@ class CalcSimilarity:
                         except KeyError:
                             count = 0
                         word_2_pair[word_1] = count + 1
-                        word_pairs[word_1] = word_2_pair
+                        word_pairs[word_2] = word_2_pair
             logging.debug('finish getting word pairs, word_pairs size: %d' % len(word_pairs))
             return word_pairs
 
